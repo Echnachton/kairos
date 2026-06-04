@@ -10,9 +10,14 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "hono": "^4.12.23"
+    "hono": "^4.12.23",
+    "playwright": "^1.60.0",
+    "ws": "^8.21.0"
   },
   "scripts": {
     "start": "bun run --hot index.ts"
+  },
+  "patchedDependencies": {
+    "playwright-core@1.60.0": "patches/playwright-core@1.60.0.patch"
   }
 }
