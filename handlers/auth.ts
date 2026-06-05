@@ -1,11 +1,12 @@
 import type { Context } from "hono";
-import { chromium, type Browser, type Page } from "playwright";
-import { join } from "node:path";
 import { HTTPException } from "hono/http-exception";
+import { join } from "node:path";
+import { type Browser, chromium, type Page } from "playwright";
 
 const CDP_PORT = 9222;
 const CDP_URL = `http://127.0.0.1:${CDP_PORT}`;
 const USER_DATA_DIR = join(import.meta.dirname, "..", "auth", "chrome-profile");
+const PROFILE_DIR = process.env.PROFILE_DIR;
 const cdpCheckTimeoutMs = 15 * 1000;
 const cdpCheckIntervalMs = 200;
 const cdpConnectRetries = 5;
@@ -26,7 +27,7 @@ export async function startBrowserWithSessionHandler(c: Context) {
         `--remote-debugging-port=${CDP_PORT}`,
         `--remote-debugging-address=127.0.0.1`,
         `--user-data-dir=${USER_DATA_DIR}`,
-        "--profile-directory=Profile 3",
+        `--profile-directory=${PROFILE_DIR}`,
         "--no-first-run",
         "--no-default-browser-check",
       ], {
