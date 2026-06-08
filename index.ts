@@ -1,23 +1,39 @@
+import registerRoutes from "@/routes";
+import env from "@/utils/resolve-env-vars";
+import { type BunSQLiteDatabase, drizzle } from "drizzle-orm/bun-sqlite";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import { serveStatic } from "hono/bun";
+import { HTTPException } from "hono/http-exception";
 import { join } from "node:path";
-import registerRoutes from "./routes";
 import type { Page } from "playwright";
 
 export type Env = {
   Variables: {
     page: Page;
-  }
-}
+    db: BunSQLiteDatabase;
+  };
+};
 
 const WEB_ROOT = join(import.meta.dirname, "web");
+const LONG_RUNNING_ROUTES = new Set([
+  "/api/v1/auth/start-browser-with-session",
+]);
+
+const db = drizzle(env.DB_FILE_NAME);
 
 const app = new Hono<Env>();
 
-app.use('*', serveStatic({
-  root: WEB_ROOT
-}));
+app.use("*", async (c, next) => {
+  c.set("db", db);
+  await next();
+});
+
+app.use(
+  "*",
+  serveStatic({
+    root: WEB_ROOT,
+  }),
+);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
@@ -29,10 +45,6 @@ app.onError((err, c) => {
 });
 
 registerRoutes(app);
-
-const LONG_RUNNING_ROUTES = new Set([
-  "/api/v1/auth/start-browser-with-session",
-]);
 
 export default {
   fetch(req: Request, server: Bun.Server<unknown>) {
