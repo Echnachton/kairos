@@ -17,7 +17,8 @@
     "ws": "^8.21.0"
   },
   "scripts": {
-    "start": "bun run --hot index.ts"
+    "start": "bun run --hot index.ts",
+    "orm:generate": "bunx drizzle-kit generate && bun run ./database/migrate.ts"
   },
   "patchedDependencies": {
     "playwright-core@1.60.0": "patches/playwright-core@1.60.0.patch"

@@ -1,4 +1,5 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 type EnvVars =
   | "DB_FILE_NAME"
@@ -6,6 +7,8 @@ type EnvVars =
   | "CDP_PORT"
   | "CDP_URL"
   | "USER_DATA_DIR";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function requireEnv(name: EnvVars, fallback?: string): string {
   const value = process.env[name];
@@ -28,7 +31,7 @@ const env: Record<EnvVars, string> = {
   CDP_URL: requireEnv("CDP_URL", "http://127.0.0.1"),
   USER_DATA_DIR: requireEnv(
     "USER_DATA_DIR",
-    join(import.meta.dirname, "..", "auth", "chrome-profile"),
+    join(__dirname, "..", "auth", "chrome-profile"),
   ),
 };
 

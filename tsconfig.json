@@ -31,5 +31,9 @@
     "paths": {
       "@/*": ["./*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "auth/chrome-profile"
+  ]
 }
