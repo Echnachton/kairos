@@ -14,7 +14,8 @@
     "drizzle-orm": "^0.45.2",
     "hono": "^4.12.23",
     "playwright": "^1.60.0",
-    "ws": "^8.21.0"
+    "ws": "^8.21.0",
+    "zod": "^4.4.3"
   },
   "scripts": {
     "start": "bun run --hot index.ts",
