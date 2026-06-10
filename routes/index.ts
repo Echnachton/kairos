@@ -1,5 +1,6 @@
 import { startBrowserWithSessionHandler } from "@/handlers/auth";
 import {
+  deletePresetFiltersHandler,
   getPresetFiltersHandler,
   postPresetFiltersHandler,
 } from "@/handlers/preset-filters";
@@ -12,6 +13,7 @@ auth.get("/start-browser-with-session", startBrowserWithSessionHandler);
 const presetFilters = new Hono<Env>().basePath("/api/v1/preset_filters");
 presetFilters.post("/", postPresetFiltersHandler);
 presetFilters.get("/", getPresetFiltersHandler);
+presetFilters.delete("/", deletePresetFiltersHandler);
 
 function registerRoutes(app: Hono<Env>) {
   app.route("/", auth);

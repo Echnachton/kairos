@@ -1,10 +1,10 @@
 import { presetFiltersTable } from "@/database/preset-filters";
 import type { Env } from "@/index.ts";
-import { and, count, like } from "drizzle-orm";
+import extractQueryParams from "@/utils/extract-query-params";
+import extractRequestBody from "@/utils/extract-request-body";
+import { and, count, eq, like } from "drizzle-orm";
 import { type Context } from "hono";
-import { safeParse, z } from "zod";
-
-type PostPresetFiltersBody = z.infer<typeof postPresetFiltersBody>;
+import { z } from "zod";
 
 const postPresetFiltersBody = z.object({
   display_name: z.string(),
@@ -22,19 +22,23 @@ const getPresetFiltersParams = z.object({
   message: "Both limit and offset must be set.",
 });
 
+const deletePresetFiltersParams = z.object({
+  id: z.string(),
+});
+
 export async function postPresetFiltersHandler(c: Context<Env>) {
   const db = c.get("db");
-  const body = await c.req.json<PostPresetFiltersBody>();
-  const parsedBody = safeParse(postPresetFiltersBody, body);
-
-  if (!parsedBody.success) {
-    return c.json({ message: "Bad request body" }, 400);
-  }
+  const parsedBody = await extractRequestBody({
+    schema: postPresetFiltersBody,
+    c,
+  });
+  const { display_name: displayName, filter_string: filterString } =
+    parsedBody.data;
 
   await db.insert(presetFiltersTable).values({
-    displayName: body.display_name,
+    displayName,
     createdAt: new Date(),
-    filterString: body.filter_string,
+    filterString,
   });
 
   return c.json({ message: "Success" }, 200);
@@ -42,12 +46,10 @@ export async function postPresetFiltersHandler(c: Context<Env>) {
 
 export async function getPresetFiltersHandler(c: Context<Env>) {
   const db = c.get("db");
-  const params = c.req.query();
-  const parsedParams = safeParse(getPresetFiltersParams, params);
-
-  if (!parsedParams.success) {
-    return c.json({ message: "Bad query param" }, 400);
-  }
+  const parsedParams = extractQueryParams({
+    schema: getPresetFiltersParams,
+    c,
+  });
 
   const {
     filter_by_display_name,
@@ -96,4 +98,19 @@ export async function getPresetFiltersHandler(c: Context<Env>) {
       count: rows.length,
     },
   }, 200);
+}
+
+export async function deletePresetFiltersHandler(c: Context<Env>) {
+  const db = c.get("db");
+  const parsedBody = await extractRequestBody({
+    schema: deletePresetFiltersParams,
+    c,
+  });
+  const { id } = parsedBody.data;
+
+  await db
+    .delete(presetFiltersTable)
+    .where(eq(presetFiltersTable.id, id));
+
+  return c.json({ message: "Deleted row" }, 200);
 }
