@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairos</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
+      integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
+      crossorigin="anonymous"
+    ></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kairos</title>
-  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
-    integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
-    crossorigin="anonymous"></script>
-</head>
+  <body>
+    <h1>Kairos</h1>
+    <button id="start-browser">Start Browser</button>
+    <script>
+      const startBrowserButton = document.getElementById(
+        "start-browser",
+      );
 
-<body>
-  <h1>Kairos</h1>
-  <button id="start-browser">Start Browser</button>
-  <script>
-    const startBrowserButton = document.getElementById("start-browser");
-    const captureSessionButton = document.getElementById("capture-session");
-    startBrowserButton.addEventListener("click", () => {
-      fetch("/api/v1/auth/start-browser-with-session")
-        .then(response => response.json())
-        .then(data => console.log(data));
-    });
-  </script>
-</body>
-
+      startBrowserButton.addEventListener("click", () => {
+        fetch("/api/v1/auth/start-browser-with-session")
+          .then((response) => response.json())
+          .then((data) => console.log(data));
+      });
+    </script>
+  </body>
 </html>

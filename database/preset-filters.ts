@@ -1,6 +1,8 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import crypto from "node:crypto";
 
+export type PresetFilter = typeof presetFiltersTable.$inferSelect;
+
 export const presetFiltersTable = sqliteTable("preset_filters", {
   id: text("id")
     .primaryKey()

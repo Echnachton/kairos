@@ -5,6 +5,7 @@ import extractRequestBody from "@/utils/extract-request-body";
 import { and, count, eq, like } from "drizzle-orm";
 import { type Context } from "hono";
 import { z } from "zod";
+import PresetFiltersTable from "@/views/PresetFiltersTable";
 
 const postPresetFiltersBody = z.object({
   display_name: z.string(),
@@ -91,13 +92,7 @@ export async function getPresetFiltersHandler(c: Context<Env>) {
     countQuery,
   ]);
 
-  return c.json({
-    preset_filters: rows,
-    pagination_information: {
-      total: totalCount ? totalCount[0]?.total : 0,
-      count: rows.length,
-    },
-  }, 200);
+  return c.html(<PresetFiltersTable rows={rows}/>)
 }
 
 export async function deletePresetFiltersHandler(c: Context<Env>) {
