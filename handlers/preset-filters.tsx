@@ -92,7 +92,7 @@ export async function getPresetFiltersHandler(c: Context<Env>) {
     countQuery,
   ]);
 
-  return c.html(<PresetFiltersTable rows={rows}/>)
+  return c.html(<PresetFiltersTable rows={rows} />);
 }
 
 export async function deletePresetFiltersHandler(c: Context<Env>) {
