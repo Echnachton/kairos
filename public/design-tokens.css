@@ -1,0 +1,127 @@
+/* ============================================================
+   KAIROS — DESIGN TOKENS
+   A calm, minimal dark theme for a personal URL-scanning tool.
+   Consume via CSS custom properties: var(--color-accent), etc.
+   Mono for data/code, sans for UI. Slightly rounded, roomy.
+   ============================================================ */
+
+:root {
+  /* ----------------------------------------------------------
+     COLOR — calm dark, low-chroma neutrals on a cool axis (~240)
+     Backgrounds step up in lightness as surfaces stack.
+     ---------------------------------------------------------- */
+
+  /* Surfaces */
+  --color-bg:            oklch(0.17 0.008 240);  /* page background        */
+  --color-surface:       oklch(0.21 0.008 240);  /* cards, panels          */
+  --color-surface-raised:oklch(0.25 0.009 240);  /* inputs, hovered rows   */
+  --color-overlay:       oklch(0.28 0.010 240);  /* popovers, menus        */
+
+  /* Borders & dividers */
+  --color-border:        oklch(0.30 0.010 240);  /* default hairline       */
+  --color-border-strong: oklch(0.40 0.012 240);  /* focused / emphasis     */
+
+  /* Text */
+  --color-text:          oklch(0.96 0.004 240);  /* primary copy           */
+  --color-text-secondary:oklch(0.78 0.008 240);  /* labels, captions       */
+  --color-text-muted:    oklch(0.60 0.010 240);  /* placeholders, hints    */
+
+  /* Accent — calm green, used for primary actions (Scan) */
+  --color-accent:        oklch(0.72 0.15 155);
+  --color-accent-hover:  oklch(0.78 0.15 155);
+  --color-accent-active: oklch(0.66 0.15 155);
+  --color-accent-text:   oklch(0.18 0.03 155);   /* text ON solid accent   */
+  --color-accent-subtle: oklch(0.72 0.15 155 / 0.14); /* tinted fill        */
+  --color-accent-border: oklch(0.72 0.15 155 / 0.40);
+
+  /* Semantic */
+  --color-danger:        oklch(0.70 0.16 25);    /* Delete, destructive    */
+  --color-danger-subtle: oklch(0.70 0.16 25 / 0.14);
+  --color-danger-border: oklch(0.70 0.16 25 / 0.40);
+  --color-success:       oklch(0.74 0.15 155);   /* running / ok status    */
+  --color-warning:       oklch(0.80 0.13 80);    /* queued / attention     */
+
+  /* Focus ring */
+  --color-focus-ring:    oklch(0.72 0.15 155 / 0.55);
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHY — sans for UI, mono for data/code
+     ---------------------------------------------------------- */
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system,
+               "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo,
+               Consolas, monospace;
+
+  /* Type scale (1.200 minor third) */
+  --text-xs:   0.75rem;   /* 12px — meta, badges            */
+  --text-sm:   0.875rem;  /* 14px — secondary, table data   */
+  --text-base: 1rem;      /* 16px — body / controls         */
+  --text-md:   1.125rem;  /* 18px                           */
+  --text-lg:   1.375rem;  /* 22px — section headings        */
+  --text-xl:   1.75rem;   /* 28px                           */
+  --text-2xl:  2.25rem;   /* 36px — page title              */
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.55;
+
+  --tracking-tight: -0.01em;
+  --tracking-wide:   0.04em;  /* eyebrows / uppercase labels */
+
+  /* ----------------------------------------------------------
+     SPACING — 4px base scale
+     ---------------------------------------------------------- */
+  --space-0:  0;
+  --space-1:  0.25rem;  /*  4px */
+  --space-2:  0.5rem;   /*  8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.5rem;   /* 24px */
+  --space-6:  2rem;     /* 32px */
+  --space-7:  3rem;     /* 48px */
+  --space-8:  4rem;     /* 64px */
+
+  /* ----------------------------------------------------------
+     RADII — slightly rounded, comfortable
+     ---------------------------------------------------------- */
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 999px;
+
+  /* ----------------------------------------------------------
+     BORDERS
+     ---------------------------------------------------------- */
+  --border-width: 1px;
+  --border:        var(--border-width) solid var(--color-border);
+  --border-strong: var(--border-width) solid var(--color-border-strong);
+
+  /* ----------------------------------------------------------
+     SHADOWS — subtle for dark surfaces
+     ---------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.30);
+  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.35);
+  --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.45);
+  --shadow-focus: 0 0 0 3px var(--color-focus-ring);
+
+  /* ----------------------------------------------------------
+     MOTION
+     ---------------------------------------------------------- */
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:   120ms;
+  --duration-normal: 200ms;
+
+  /* ----------------------------------------------------------
+     LAYOUT
+     ---------------------------------------------------------- */
+  --layout-max:    960px;   /* main content width            */
+  --layout-gutter: var(--space-6);
+  --control-height: 38px;   /* buttons / inputs              */
+}
