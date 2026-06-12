@@ -1,11 +1,12 @@
 import { presetFiltersTable } from "@/database/preset-filters";
 import type { Env } from "@/index.ts";
+import appendLayout from "@/utils/append-layout";
 import extractQueryParams from "@/utils/extract-query-params";
 import extractRequestBody from "@/utils/extract-request-body";
+import PresetFiltersTable from "@/views/PresetFiltersTable";
 import { and, count, eq, like } from "drizzle-orm";
 import { type Context } from "hono";
 import { z } from "zod";
-import PresetFiltersTable from "@/views/PresetFiltersTable";
 
 const postPresetFiltersBody = z.object({
   display_name: z.string(),
@@ -92,7 +93,7 @@ export async function getPresetFiltersHandler(c: Context<Env>) {
     countQuery,
   ]);
 
-  return c.html(<PresetFiltersTable rows={rows} />);
+  return appendLayout(c, <PresetFiltersTable rows={rows} />);
 }
 
 export async function deletePresetFiltersHandler(c: Context<Env>) {

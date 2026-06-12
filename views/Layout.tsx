@@ -1,7 +1,11 @@
 import { html } from "hono/html";
-import type { FC } from "hono/jsx";
+import type { Child, FC } from "hono/jsx";
 
-const Layout: FC = () => {
+type Props = {
+  children?: Child;
+};
+
+const Layout: FC<Props> = ({ children }) => {
   return (
     <>
       {html`<!DOCTYPE html>`}
@@ -49,21 +53,15 @@ const Layout: FC = () => {
           <h1>Kairos</h1>
 
           <main id="main-content">
+            {children}
           </main>
 
-          <button id="start-browser">Start Browser</button>
-
-          {html`
-          <script>
-            const startBrowserButton = document.getElementById("start-browser");
-
-            startBrowserButton.addEventListener("click", () => {
-              fetch("/api/v1/auth/start-browser-with-session")
-                .then((response) => response.json())
-                .then((data) => console.log(data));
-            });
-          </script>
-        `}
+          <button
+            id="start-browser"
+            hx-get="/api/v1/auth/start-browser-with-session"
+          >
+            Start Browser
+          </button>
         </body>
       </html>
     </>
