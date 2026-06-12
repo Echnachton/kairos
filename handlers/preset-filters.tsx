@@ -3,8 +3,9 @@ import type { Env } from "@/index.ts";
 import appendLayout from "@/utils/append-layout";
 import extractQueryParams from "@/utils/extract-query-params";
 import extractRequestBody from "@/utils/extract-request-body";
-import PresetFiltersTable from "@/views/PresetFiltersTable";
-import { and, count, eq, like } from "drizzle-orm";
+import PresetFiltersTableHeader from "@/views/PresetFiltersTableHeader";
+import PresetFiltersTableRows from "@/views/PresetFiltersTableRows";
+import { and, eq, like } from "drizzle-orm";
 import { type Context } from "hono";
 import { z } from "zod";
 
@@ -46,7 +47,7 @@ export async function postPresetFiltersHandler(c: Context<Env>) {
   return c.json({ message: "Success" }, 200);
 }
 
-export async function getPresetFiltersHandler(c: Context<Env>) {
+export async function getPresetFiltersTableRows(c: Context<Env>) {
   const db = c.get("db");
   const parsedParams = extractQueryParams({
     schema: getPresetFiltersParams,
@@ -81,28 +82,34 @@ export async function getPresetFiltersHandler(c: Context<Env>) {
     .from(presetFiltersTable)
     .where(whereClause);
 
-  const countQuery = db
-    .select({ total: count() })
-    .from(presetFiltersTable)
-    .where(whereClause);
+  const rows = limit != null && offset != null
+    ? await dataQuery.limit(limit).offset(offset)
+    : await dataQuery;
 
-  const [rows, totalCount] = await Promise.all([
-    limit != null && offset != null
-      ? dataQuery.limit(limit).offset(offset)
-      : dataQuery,
-    countQuery,
-  ]);
+  return appendLayout(
+    c,
+    <PresetFiltersTableRows rows={rows} />,
+  );
+}
 
-  return appendLayout(c, <PresetFiltersTable rows={rows} />);
+export async function getPresetFiltersTableHeader(c: Context<Env>) {
+  const db = c.get("db");
+
+  const total = await db.$count(presetFiltersTable);
+
+  return appendLayout(
+    c,
+    <PresetFiltersTableHeader total={total} />,
+  );
 }
 
 export async function deletePresetFiltersHandler(c: Context<Env>) {
   const db = c.get("db");
-  const parsedBody = await extractRequestBody({
+  const parsedParams = extractQueryParams({
     schema: deletePresetFiltersParams,
     c,
   });
-  const { id } = parsedBody.data;
+  const { id } = parsedParams.data;
 
   await db
     .delete(presetFiltersTable)

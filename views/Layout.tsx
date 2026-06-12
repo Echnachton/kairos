@@ -24,6 +24,11 @@ const Layout: FC<Props> = ({ children }) => {
             crossorigin="anonymous"
           >
           </script>
+          <script
+            src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/ext/json-enc.js"
+            crossorigin="anonymous"
+          >
+          </script>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link

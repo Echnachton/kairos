@@ -1,13 +1,6 @@
-import type { PresetFilter } from "@/database/preset-filters";
 import type { FC } from "hono/jsx";
 
-type Props = {
-  rows: PresetFilter[];
-};
-
-const PresetFiltersTable: FC<Props> = ({
-  rows,
-}) => {
+const PresetFiltersTable: FC = () => {
   return (
     <>
       <header class="page-head">
@@ -39,10 +32,25 @@ const PresetFiltersTable: FC<Props> = ({
       </header>
 
       <section class="card">
-        <div class="card__head">
-          <h2 class="card__title">Presets</h2>
-          <span class="card__count">3 saved</span>
+        <div
+          id="preset-table-header"
+          class="card__head"
+          hx-get="/preset-filters-table-header"
+          hx-swap="innerHTML"
+          hx-trigger="load, refresh"
+        >
         </div>
+
+        <form
+          id="add-preset-form"
+          hx-post="/api/v1/preset_filters/"
+          hx-ext="json-enc"
+          hx-swap="none"
+          {...{
+            "hx-on:htmx:after-request":
+              "if (event.detail.successful) { event.target.reset(); htmx.trigger('#preset-table-filters', 'refresh'); htmx.trigger('#preset-table-header', 'refresh'); }",
+          }}
+        />
 
         <table>
           <thead>
@@ -53,65 +61,48 @@ const PresetFiltersTable: FC<Props> = ({
             </tr>
           </thead>
 
-          <tbody>
-            {rows.length === 0
-              ? (
-                <tr>
-                  <td colSpan={3}>No presets yet.</td>
-                </tr>
-              )
-              : rows.map((row) => (
-                <tr key={row.id}>
-                  <td class="cell-name">{row.displayName}</td>
-                  <td class="cell-filter">{row.filterString}</td>
-                  <td class="col-actions">
-                    <span class="row-actions">
-                      <button
-                        class="btn btn--accent-soft btn--sm"
-                        type="button"
-                      >
-                        Scan
-                      </button>
-                      <button
-                        class="btn btn--ghost-danger btn--sm"
-                        type="button"
-                      >
-                        Delete
-                      </button>
-                    </span>
-                  </td>
-                </tr>
-              ))}
+          <tbody
+            id="preset-table-filters"
+            hx-get="/preset-filters-table-row"
+            hx-swap="innerHTML"
+            hx-trigger="load, refresh"
+          >
           </tbody>
 
           <tfoot>
-            <form>
-              <tr class="add-row">
-                <td style="padding: 12px">
-                  <input
-                    class="input"
-                    type="text"
-                    placeholder="name"
-                    aria-label="New preset name"
-                  />
-                </td>
-                <td style="padding: 12px 11px 12px 12px">
-                  <input
-                    class="input"
-                    type="text"
-                    placeholder="filter"
-                    aria-label="New preset filter"
-                  />
-                </td>
-                <td class="col-actions">
-                  <span class="row-actions">
-                    <button class="btn btn--primary btn--sm" type="submit">
-                      Add preset
-                    </button>
-                  </span>
-                </td>
-              </tr>
-            </form>
+            <tr class="add-row">
+              <td style="padding: 12px">
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="name"
+                  aria-label="New preset name"
+                  name="display_name"
+                  form="add-preset-form"
+                />
+              </td>
+              <td style="padding: 12px 11px 12px 12px">
+                <input
+                  class="input"
+                  type="text"
+                  placeholder="filter"
+                  aria-label="New preset filter"
+                  name="filter_string"
+                  form="add-preset-form"
+                />
+              </td>
+              <td class="col-actions">
+                <span class="row-actions">
+                  <button
+                    form="add-preset-form"
+                    class="btn btn--primary btn--sm"
+                    type="submit"
+                  >
+                    Add preset
+                  </button>
+                </span>
+              </td>
+            </tr>
           </tfoot>
         </table>
       </section>
