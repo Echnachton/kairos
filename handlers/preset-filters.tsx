@@ -1,11 +1,15 @@
-import { presetFiltersTable } from "@/database/preset-filters";
+import {
+  deletePresetFilters,
+  getPresetFilters,
+  getPresetFiltersCount,
+  insertPresetFilter,
+} from "@/database/preset-filters";
 import type { Env } from "@/index.ts";
 import appendLayout from "@/utils/append-layout";
 import extractQueryParams from "@/utils/extract-query-params";
 import extractRequestBody from "@/utils/extract-request-body";
 import PresetFiltersTableHeader from "@/views/PresetFiltersTableHeader";
 import PresetFiltersTableRows from "@/views/PresetFiltersTableRows";
-import { and, eq, like } from "drizzle-orm";
 import { type Context } from "hono";
 import { z } from "zod";
 
@@ -30,7 +34,6 @@ const deletePresetFiltersParams = z.object({
 });
 
 export async function postPresetFiltersHandler(c: Context<Env>) {
-  const db = c.get("db");
   const parsedBody = await extractRequestBody({
     schema: postPresetFiltersBody,
     c,
@@ -38,53 +41,30 @@ export async function postPresetFiltersHandler(c: Context<Env>) {
   const { display_name: displayName, filter_string: filterString } =
     parsedBody.data;
 
-  await db.insert(presetFiltersTable).values({
-    displayName,
-    createdAt: new Date(),
-    filterString,
-  });
+  await insertPresetFilter({ displayName, filterString });
 
   return c.json({ message: "Success" }, 200);
 }
 
 export async function getPresetFiltersTableRows(c: Context<Env>) {
-  const db = c.get("db");
   const parsedParams = extractQueryParams({
     schema: getPresetFiltersParams,
     c,
   });
 
   const {
-    filter_by_display_name,
-    filter_by_filter_string,
+    filter_by_display_name: filterByDisplayName,
+    filter_by_filter_string: filterByFilterString,
     limit,
     offset,
   } = parsedParams.data;
 
-  const conditions = [];
-
-  if (filter_by_display_name) {
-    conditions.push(
-      like(presetFiltersTable.displayName, `%${filter_by_display_name}%`),
-    );
-  }
-
-  if (filter_by_filter_string) {
-    conditions.push(
-      like(presetFiltersTable.filterString, `%${filter_by_filter_string}%`),
-    );
-  }
-
-  const whereClause = conditions.length ? and(...conditions) : undefined;
-
-  const dataQuery = db
-    .select()
-    .from(presetFiltersTable)
-    .where(whereClause);
-
-  const rows = limit != null && offset != null
-    ? await dataQuery.limit(limit).offset(offset)
-    : await dataQuery;
+  const rows = await getPresetFilters({
+    filterByDisplayName,
+    filterByFilterString,
+    limit,
+    offset,
+  });
 
   return appendLayout(
     c,
@@ -93,9 +73,7 @@ export async function getPresetFiltersTableRows(c: Context<Env>) {
 }
 
 export async function getPresetFiltersTableHeader(c: Context<Env>) {
-  const db = c.get("db");
-
-  const total = await db.$count(presetFiltersTable);
+  const total = await getPresetFiltersCount();
 
   return appendLayout(
     c,
@@ -104,16 +82,13 @@ export async function getPresetFiltersTableHeader(c: Context<Env>) {
 }
 
 export async function deletePresetFiltersHandler(c: Context<Env>) {
-  const db = c.get("db");
   const parsedParams = extractQueryParams({
     schema: deletePresetFiltersParams,
     c,
   });
   const { id } = parsedParams.data;
 
-  await db
-    .delete(presetFiltersTable)
-    .where(eq(presetFiltersTable.id, id));
+  await deletePresetFilters({ id });
 
   return c.json({ message: "Deleted row" }, 200);
 }

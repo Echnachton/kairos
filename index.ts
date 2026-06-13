@@ -1,6 +1,4 @@
 import registerRoutes from "@/routes";
-import env from "@/utils/resolve-env-vars";
-import { type BunSQLiteDatabase, drizzle } from "drizzle-orm/bun-sqlite";
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import { HTTPException } from "hono/http-exception";
@@ -10,7 +8,6 @@ import type { Page } from "playwright";
 export type Env = {
   Variables: {
     page: Page;
-    db: BunSQLiteDatabase;
   };
 };
 
@@ -20,14 +17,7 @@ const LONG_RUNNING_ROUTES = new Set([
 
 const WEB_ROOT = join(import.meta.dirname, "public");
 
-const db = drizzle(env.DB_FILE_NAME);
-
 const app = new Hono<Env>();
-
-app.use("*", async (c, next) => {
-  c.set("db", db);
-  await next();
-});
 
 app.use(
   "*",
